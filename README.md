@@ -17,7 +17,10 @@ Add here any assumptions you made while writing the crawler, any ways in which y
 - Saves crawled pages and their contents to files
 
 ## Usage
+
+```bash
 ./crawler [seedURL] [pageDirectory] [maxDepth]
+```
 
 ## Testing
 
