@@ -1,4 +1,5 @@
 #include "pagedir.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -39,23 +40,22 @@ bool pagedir_init(const char *pageDirectory) {
 
 
 
-bool pagedir_save(const webpage_t* page, const char* pageDirectory, int docID) {
+void pagedir_save(const webpage_t* page, const char* pageDirectory, int docID) {
     char filepath[256];
     snprintf(filepath, sizeof(filepath), "%s/%d", pageDirectory, docID);
     FILE* fp = fopen(filepath, "w");
     if (fp == NULL) {
-        fprintf(stderr, "Error opening file %s: %s\n", filepath, strerror(errno));
-        return false;
+        fprintf(stderr, "Error opening file %s\n", filepath);
+        return;
     }
 
     // Successfully opened the file, now write the data
     if (fprintf(fp, "%s\n%d\n%s", webpage_getURL(page), webpage_getDepth(page), webpage_getHTML(page)) < 0) {
-        fprintf(stderr, "Error writing to file %s: %s\n", filepath, strerror(errno));
+        fprintf(stderr, "Error writing to file %s\n", filepath);
         fclose(fp);
-        return false;
+        return;
     }
 
     fclose(fp);
-    return true;
+    return;
 }
-
