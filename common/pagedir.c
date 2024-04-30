@@ -39,23 +39,40 @@ bool pagedir_init(const char *pageDirectory) {
 }
 
 
-
 void pagedir_save(const webpage_t* page, const char* pageDirectory, int docID) {
-    char filepath[256];
-    snprintf(filepath, sizeof(filepath), "%s/%d", pageDirectory, docID);
+    // Validate input parameters
+    if (page == NULL) {
+        fprintf(stderr, "Invalid input to pagedir_save function\n");
+        return;
+    }
+
+    // Calculate required buffer size and allocate memory
+    int required_size = snprintf(NULL, 0, "%s/%d", pageDirectory, docID) + 1;
+    char* filepath = malloc(required_size);
+    if (filepath == NULL) {
+        fprintf(stderr, "Failed to allocate memory for filepath\n");
+        return;
+    }
+
+    // Construct the file path
+    snprintf(filepath, required_size, "%s/%d", pageDirectory, docID);
+
+    // Attempt to open the file for writing
     FILE* fp = fopen(filepath, "w");
     if (fp == NULL) {
-        fprintf(stderr, "Error opening file %s\n", filepath);
+        fprintf(stderr, "Failed to open file %s for writing\n", filepath);
+        free(filepath); // Free memory on error before returning
         return;
     }
-
-    // Successfully opened the file, now write the data
-    if (fprintf(fp, "%s\n%d\n%s", webpage_getURL(page), webpage_getDepth(page), webpage_getHTML(page)) < 0) {
-        fprintf(stderr, "Error writing to file %s\n", filepath);
-        fclose(fp);
-        return;
+    else {
+      fprintf(fp, "%s\n", webpage_getURL(page), '\n');
+      fprintf(fp, "%d\n", webpage_getDepth(page), '\n');
+      fprintf(fp, "%s\n", webpage_getHTML(page), '\n');
     }
+  
 
+   // Clean up resources
     fclose(fp);
-    return;
+    free(filepath);
 }
+
