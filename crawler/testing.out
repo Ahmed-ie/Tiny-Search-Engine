@@ -1,0 +1,17 @@
+Testing incorrect command-line arguments...
+./testing.sh: line 17: ./crawler/crawler: Not a directory
+./testing.sh: line 18: ./crawler/crawler: Not a directory
+./testing.sh: line 19: ./crawler/crawler: Not a directory
+Test case 1 complete.
+Crawling simple closed set of cross-linked web pages...
+./testing.sh: line 24: ./crawler/crawler: Not a directory
+./testing.sh: line 25: ./crawler/crawler: Not a directory
+./testing.sh: line 26: ./crawler/crawler: Not a directory
+Test case 2 complete.
+Crawling from a different seed page...
+./testing.sh: line 31: ./crawler/crawler: Not a directory
+Test case 3 complete.
+Crawling from a bigger playground...
+./testing.sh: line 36: ./crawler/crawler: Not a directory
+Test case 4 complete.
+All tests complete.
