@@ -1,40 +1,59 @@
 #!/bin/bash
 
-# Test parameters
-seedURL1="http://cs50tse.cs.dartmouth.edu/tse/letters/index.html"
-seedURL2="http://cs50tse.cs.dartmouth.edu/tse/letters/A.html"  # Different seed page in the same site
-bigSeedURL="http://cs50tse.cs.dartmouth.edu/tse/"  # Bigger playground
-pageDirectory="data"
-maxDepth1=2
-maxDepth2=1
-maxDepth3=0
+# This script tests the crawler's functionality on a variety of inputs and configurations.
 
-# Create pageDirectory if it doesn't exist
-mkdir -p $pageDirectory
+echo "Testing the crawler with invalid command-line arguments..."
+# Test with no arguments
+./crawler
 
-# Test case 1: Incorrect command-line arguments
-echo "Testing incorrect command-line arguments..."
-./crawler/crawler                          # Missing required arguments
-./crawler/crawler invalidURL               # Invalid seed URL
-./crawler/crawler $seedURL1 $pageDirectory invalidDepth  # Invalid depth
-echo "Test case 1 complete."
+# Test with one argument
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html
 
-# Test case 2: Crawl a closed set of cross-linked web pages at different depths
-echo "Crawling simple closed set of cross-linked web pages..."
-./crawler/crawler $seedURL1 $pageDirectory/letters-depth-$maxDepth1 $maxDepth1
-./crawler/crawler $seedURL1 $pageDirectory/letters-depth-$maxDepth2 $maxDepth2
-./crawler/crawler $seedURL1 $pageDirectory/letters-depth-$maxDepth3 $maxDepth3
-echo "Test case 2 complete."
+# Test with an invalid URL
+./crawler http://invalidurl data/invalid 1
 
-# Test case 3: Crawl from a different seed page in the same site
-echo "Crawling from a different seed page..."
-./crawler/crawler $seedURL2 $pageDirectory/letters-different-seed $maxDepth1
-echo "Test case 3 complete."
+# Test with non-existent directory
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html non/existent/dir 1
 
-# Test case 4: Crawl from a bigger playground
-echo "Crawling from a bigger playground..."
-./crawler/crawler $bigSeedURL $pageDirectory/bigger-playground-depth-$maxDepth1 $maxDepth1
-echo "Test case 4 complete."
+# Test with invalid depth (negative number)
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/invalid -1
 
-echo "All tests complete."
+# Test with depth that is too high (non-numeric input)
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/invalid abc
+
+echo "Testing the crawler on a simple, closed set of cross-linked web pages..."
+
+# Set up directories for valid tests
+mkdir -p data/letter-2
+mkdir -p data/toscrape-1
+
+# Test crawling letters at various depths
+echo "Crawling letters at depth 0..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/letter-2 0
+
+echo "Crawling letters at depth 1..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/letter-2 1
+
+echo "Crawling letters at depth 2..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/letter-2 2
+
+echo "Testing with a different seed page on the same site..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/B.html data/letter-2 2
+
+echo "Pointing the crawler at a bigger playground..."
+
+echo "Crawling toscrape at depth 0..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 0
+
+echo "Crawling toscrape at depth 1..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 1
+
+echo "Crawling toscrape at depth 2..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 2
+
+# Additional test with a greater depth (careful with this one)
+echo "Crawling toscrape at a greater depth 3 (be ready to kill if running amok)..."
+./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 3
+
+echo "Testing completed."
 

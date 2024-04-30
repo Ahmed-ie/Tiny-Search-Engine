@@ -19,6 +19,7 @@
 static void parse_arguments(int argc, char* argv[], char** seedURL, char** pageDirectory, int* maxDepth);
 static void crawl(char* seedURL, char* pageDirectory, int maxDepth);
 static void page_scan(webpage_t* page, int depth, hashtable_t* urls_seen, bag_t* pages_to_crawl);
+static bool is_internal_link(const char* url);
 
 int main(int argc, char* argv[]) {
     char* seedURL;
@@ -84,7 +85,7 @@ static void crawl(char* seedURL, char* pageDirectory, int maxDepth) {
         fprintf(stderr, "Error: Failed to insert seed URL into seen hashtable.\n");
         webpage_delete(seedPage);
         hashtable_delete(urls_seen, NULL);
-        bag_delete(pages_to_crawl, (void (*)(void*))webpage_delete);
+        bag_delete(pages_to_crawl, NULL);
         return;
     }
 
@@ -92,21 +93,66 @@ static void crawl(char* seedURL, char* pageDirectory, int maxDepth) {
     bag_insert(pages_to_crawl, seedPage);
 
     // Start crawling loop
-    while ((seedPage = bag_extract(pages_to_crawl)) != NULL) {
+    webpage_t* currPage;
+    while ((currPage = bag_extract(pages_to_crawl)) != NULL) {
         // Fetch the webpage
-        if (webpage_fetch(seedPage)) {
+        if (webpage_fetch(currPage)) {
             // Save the webpage
-            pagedir_save(seedPage, pageDirectory, docID++);
+            pagedir_save(currPage, pageDirectory, docID++);
             // Explore links in the webpage if depth allows
-            if (webpage_getDepth(seedPage) < maxDepth) {
-                page_scan(seedPage, webpage_getDepth(seedPage) + 1, urls_seen, pages_to_crawl);
+            if (webpage_getDepth(currPage) < maxDepth) {
+                page_scan(currPage, webpage_getDepth(currPage) + 1, urls_seen, pages_to_crawl);
             }
         }
-        webpage_delete(seedPage);
+        printf("%s, ",webpage_getURL(currPage));
+        webpage_delete(currPage);
     }
 
     // Cleanup
-    hashtable_delete(urls_seen, free);
-    bag_delete(pages_to_crawl, (void (*)(void*))webpage_delete);
+    hashtable_delete(urls_seen, NULL);
+    bag_delete(pages_to_crawl, NULL);
+}
+
+// Scan the webpage for links and add them to the bag if they haven't been seen before
+static void page_scan(webpage_t* page, int depth, hashtable_t* urls_seen, bag_t* pages_to_crawl) {
+    // Check if the webpage is valid
+    if (page == NULL || urls_seen == NULL || pages_to_crawl == NULL) {
+        fprintf(stderr, "Error: Invalid arguments to page_scan\n");
+        return;
+    }
+
+    // Get the HTML content of the webpage
+  //  char* html = webpage_getHTML(page);
+  //  if (html == NULL) {
+    //    fprintf(stderr, "Error: Failed to get HTML content of the webpage\n");
+      //  return;
+    //}
+
+    // Extract links from the HTML content
+    int pos = 0;
+    char* url;
+    while ((url = webpage_getNextURL(page, &pos)) != NULL) {
+        char* normalized = normalizeURL(url);
+        // Check if the link is internal and hasn't been seen before
+        if (normalized != NULL) {
+        if (is_internal_link(normalized) && !hashtable_insert(urls_seen,normalized, "")) {
+            // Create a new webpage for the link and add it to the bag
+            webpage_t* new_page = webpage_new(normalized, depth, NULL);
+            if (new_page != NULL) {
+                bag_insert(pages_to_crawl, new_page);
+            } else {
+                fprintf(stderr, "Error: Failed to create webpage for URL: %s\n", url);
+            }
+        }}
+        free(url); // Free memory allocated by webpage_getNextURL
+    }
+
+    // Free the HTML content
+  //ree(html);
+}
+
+// Check if the given URL is internal (starts with "http://" or "https://")
+static bool is_internal_link(const char* url) {
+    return strncmp(url, "http://", 7) == 0 || strncmp(url, "https://", 8) == 0;
 }
 

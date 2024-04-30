@@ -1,17 +1,37 @@
-Testing incorrect command-line arguments...
-./testing.sh: line 17: ./crawler/crawler: Not a directory
-./testing.sh: line 18: ./crawler/crawler: Not a directory
-./testing.sh: line 19: ./crawler/crawler: Not a directory
-Test case 1 complete.
-Crawling simple closed set of cross-linked web pages...
-./testing.sh: line 24: ./crawler/crawler: Not a directory
-./testing.sh: line 25: ./crawler/crawler: Not a directory
-./testing.sh: line 26: ./crawler/crawler: Not a directory
-Test case 2 complete.
-Crawling from a different seed page...
-./testing.sh: line 31: ./crawler/crawler: Not a directory
-Test case 3 complete.
-Crawling from a bigger playground...
-./testing.sh: line 36: ./crawler/crawler: Not a directory
-Test case 4 complete.
-All tests complete.
+Testing the crawler with invalid command-line arguments...
+Usage: ./crawler <seedURL> <pageDirectory> <maxDepth>
+Usage: ./crawler <seedURL> <pageDirectory> <maxDepth>
+Error accessing directory: No such file or directory
+Error: pageDirectory 'data/invalid' is not writable or cannot be created
+Error accessing directory: No such file or directory
+Error: pageDirectory 'non/existent/dir' is not writable or cannot be created
+Error: maxDepth must be between 0 and 10
+Error accessing directory: No such file or directory
+Error: pageDirectory 'data/invalid' is not writable or cannot be created
+Testing the crawler on a simple, closed set of cross-linked web pages...
+Crawling letters at depth 0...
+munmap_chunk(): invalid pointer
+./testing.sh: line 32: 3308390 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/letter-2 0
+Crawling letters at depth 1...
+munmap_chunk(): invalid pointer
+./testing.sh: line 35: 3308392 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/letter-2 1
+Crawling letters at depth 2...
+munmap_chunk(): invalid pointer
+./testing.sh: line 38: 3308398 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html data/letter-2 2
+Testing with a different seed page on the same site...
+munmap_chunk(): invalid pointer
+./testing.sh: line 41: 3308400 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/B.html data/letter-2 2
+Pointing the crawler at a bigger playground...
+Crawling toscrape at depth 0...
+munmap_chunk(): invalid pointer
+./testing.sh: line 46: 3308406 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 0
+Crawling toscrape at depth 1...
+munmap_chunk(): invalid pointer
+./testing.sh: line 49: 3308410 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 1
+Crawling toscrape at depth 2...
+munmap_chunk(): invalid pointer
+./testing.sh: line 52: 3308413 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 2
+Crawling toscrape at a greater depth 3 (be ready to kill if running amok)...
+munmap_chunk(): invalid pointer
+./testing.sh: line 56: 3308415 Aborted                 (core dumped) ./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html data/toscrape-1 3
+Testing completed.
