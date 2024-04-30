@@ -65,9 +65,9 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, int docID) {
         return;
     }
     else {
-      fprintf(fp, "%s\n", webpage_getURL(page), '\n');
-      fprintf(fp, "%d\n", webpage_getDepth(page), '\n');
-      fprintf(fp, "%s\n", webpage_getHTML(page), '\n');
+      fprintf(fp, "%s\n", webpage_getURL(page));
+      fprintf(fp, "%d\n", webpage_getDepth(page));
+      fprintf(fp, "%s\n", webpage_getHTML(page));
     }
   
 
