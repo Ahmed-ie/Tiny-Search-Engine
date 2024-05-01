@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+// Parses command line arguments
 static void parse_arguments(int argc, char* argv[], char** seedURL, char** pageDirectory, int* maxDepth) {
     if (argc != 4) {
         fprintf(stderr, "Usage: %s <seedURL> <pageDirectory> <maxDepth>\n", argv[0]);
@@ -76,8 +77,8 @@ static void crawl(char* seedURL, char* pageDirectory, int maxDepth) {
     if (!seedPage || !hashtable_insert(urls_seen, seedURL, "")) {
         fprintf(stderr, "Error: Failed to insert seed URL into seen hashtable.\n");
         webpage_delete(seedPage);  // Null-safe in most implementations
-        hashtable_delete(urls_seen, free);
-        bag_delete(pages_to_crawl, (void (*)(void*))webpage_delete);
+        hashtable_delete(urls_seen, NULL);
+        bag_delete(pages_to_crawl, NULL);
         return;
     }
 
@@ -96,8 +97,8 @@ static void crawl(char* seedURL, char* pageDirectory, int maxDepth) {
         docID++;
     }
 
-    hashtable_delete(urls_seen, free);
-    bag_delete(pages_to_crawl, (void (*)(void*))webpage_delete);
+    hashtable_delete(urls_seen, NULL);
+    bag_delete(pages_to_crawl, NULL);
 }
 
 // Scan the webpage for links and add them to the bag if they haven't been seen before
