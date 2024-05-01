@@ -1,33 +1,22 @@
-#ifndef __PAGEDIR_H
-#define __PAGEDIR_H
+#ifndef PAGEDIR_H
+#define PAGEDIR_H
 
-#include "webpage.h"
 #include <stdbool.h>
+#include "webpage.h"
 
-/**
- * pagedir_init - Initialize the page directory for the crawler.
- * Ensures the directory exists and is writable. If the directory does not exist,
- * it attempts to create it with appropriate permissions. This function should
- * be called before attempting to save pages to ensure the directory is
- * prepared.
- *
- * @param pageDirectory The directory to initialize.
- * @return true if the directory is ready to be used, false if an error occurred.
- */
+// Initializes a directory for the crawler, creating a special file to mark it as such.
 bool pagedir_init(const char* pageDirectory);
 
-/**
- * pagedir_save - Save a webpage's content into a specified directory with a unique ID.
- * The function constructs a file named with the docID within the directory
- * specified by pageDirectory. It writes the webpage's URL, depth, and HTML
- * content to this file. Each piece of information is written on a new line
- * starting with the URL, then the depth, and followed by the HTML content.
- *
- * @param page The webpage structure containing the page's content to save.
- * @param pageDirectory The directory where the page should be saved.
- * @param docID The unique identifier for the file, typically the sequence number of the page.
- */
-void pagedir_save(const webpage_t* page, const char* pageDirectory, int docID);
+// Saves a webpage's content to a file within the specified directory, using the document ID to name the file.
+void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID);
 
-#endif // __PAGEDIR_H
+// Updates a file path by appending a document ID to it, used for creating unique file names within a directory.
+char* updateFilePointer(char* fp, int docID);
 
+// Validates if a directory is suitable for storing crawler output by checking for a special file.
+bool directoryValidate(char* dirPath);
+
+// Loads a webpage from a file within the specified page directory.
+webpage_t* pageload(char* current);
+
+#endif // PAGEDIR_H

@@ -1,78 +1,67 @@
+/*
+ * Ahmed's pagedir.c
+ * Author: Ahmed
+ * File: pagedir.c
+ * 
+ * This file contains implementations for functions related to managing
+ * directories and saving webpages.
+ */
+
 #include "pagedir.h"
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-// Prototype for a helper function to check directory writability
-#include <errno.h>
-
+#include <string.h>
+ 
+/*
+ * Initializes a page directory for storing webpages.
+ * Parameters:
+ *   - pageDirectory: The directory path where the pages will be stored.
+ * Returns:
+ *   - true if initialization is successful, false otherwise.
+ */
 bool pagedir_init(const char *pageDirectory) {
     struct stat st;
-
-    // Check if directory exists and is a directory
-    if (stat(pageDirectory, &st) != 0) {
-        perror("Error accessing directory");
+ 
+    if (stat(pageDirectory, &st) != 0 || !S_ISDIR(st.st_mode)) {
+        fprintf(stderr, "Error: Directory does not exist or is not a directory\n");
         return false;
     }
-    if (!S_ISDIR(st.st_mode)) {
-        fprintf(stderr, "Provided path is not a directory\n");
-        return false;
-    }
-
-    // Construct the pathname for the .crawler file in that directory
-    char fileName[256]; // Increased size for longer paths
+ 
+    char fileName[256];
     snprintf(fileName, sizeof(fileName), "%s/.crawler", pageDirectory);
-
-    // Open the file for writing; on error, return false.
     FILE *file = fopen(fileName, "w");
     if (file == NULL) {
         perror("Failed to create .crawler file");
         return false;
     }
-
-    // Close the file and return true.
     fclose(file);
-    printf("File added to .crawler\n");
     return true;
 }
 
-
-void pagedir_save(const webpage_t* page, const char* pageDirectory, int docID) {
-    // Validate input parameters
-    if (page == NULL) {
-        fprintf(stderr, "Invalid input to pagedir_save function\n");
+/*
+ * Saves a webpage to a file in the specified page directory.
+ * Parameters:
+ *   - page: The webpage to be saved.
+ *   - pageDirectory: The directory path where the page will be saved.
+ *   - docID: The identifier for the document.
+ */
+void pagedir_save(const webpage_t *page, const char *pageDirectory, int docID) {
+    if (!page) {
+        fprintf(stderr, "Invalid webpage\n");
         return;
     }
-
-    // Calculate required buffer size and allocate memory
-    int required_size = snprintf(NULL, 0, "%s/%d", pageDirectory, docID) + 1;
-    char* filepath = malloc(required_size);
-    if (filepath == NULL) {
-        fprintf(stderr, "Failed to allocate memory for filepath\n");
+    
+    char filePath[256];
+    snprintf(filePath, sizeof(filePath), "%s/%d", pageDirectory, docID);
+    FILE *fp = fopen(filePath, "w");
+    if (!fp) {
+        fprintf(stderr, "Failed to open file %s for writing\n", filePath);
         return;
     }
-
-    // Construct the file path
-    snprintf(filepath, required_size, "%s/%d", pageDirectory, docID);
-
-    // Attempt to open the file for writing
-    FILE* fp = fopen(filepath, "w");
-    if (fp == NULL) {
-        fprintf(stderr, "Failed to open file %s for writing\n", filepath);
-        free(filepath); // Free memory on error before returning
-        return;
-    }
-    else {
-      fprintf(fp, "%s\n", webpage_getURL(page));
-      fprintf(fp, "%d\n", webpage_getDepth(page));
-      fprintf(fp, "%s\n", webpage_getHTML(page));
-    }
-  
-
-   // Clean up resources
+ 
+    fprintf(fp, "%s\n%d\n%s", webpage_getURL(page), webpage_getDepth(page), webpage_getHTML(page));
     fclose(fp);
-    free(filepath);
 }
 
