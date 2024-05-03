@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+=======
+/*
+ * Ahmed's Web Crawler
+ * Author: Ahmed
+ * File: crawler.c
+ * Description: A simple web crawler program that crawls webpages starting from a seed URL and saves them to a specified directory.
+ */
+>>>>>>> submit4
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +20,7 @@
 #include "unistd.h"
 
 #define MAX_DEPTH 10
-
+// Function prototypes
 // Function prototypes
 static void parse_arguments(int argc, char* argv[], char** seedURL, char** pageDirectory, int* maxDepth);
 static void crawl(char* seedURL, char* pageDirectory, int maxDepth);
@@ -86,10 +95,20 @@ static void crawl(char* seedURL, char* pageDirectory, int maxDepth) {
 
     webpage_t* currPage;
     while ((currPage = bag_extract(pages_to_crawl)) != NULL) {
+<<<<<<< HEAD
         if (webpage_fetch(currPage)) {
             printf("%d fetched: %s\n", webpage_getDepth(currPage), webpage_getURL(currPage));
             pagedir_save(currPage, pageDirectory, docID);
             if (webpage_getDepth(currPage) < maxDepth) {
+=======
+        int depth = webpage_getDepth(currPage);
+        char* url = webpage_getURL(currPage);
+        if (webpage_fetch(currPage)) {
+            printf("%d   Fetched: %s\n", depth, url);
+            pagedir_save(currPage, pageDirectory, docID);
+            if (depth < maxDepth) {
+                printf("%d    Added: %s\n", depth, url);
+>>>>>>> submit4
                 page_scan(currPage, urls_seen, pages_to_crawl);
             }
         }
@@ -103,6 +122,7 @@ static void crawl(char* seedURL, char* pageDirectory, int maxDepth) {
 
 // Scan the webpage for links and add them to the bag if they haven't been seen before
 static void page_scan(webpage_t* page, hashtable_t* urls_seen, bag_t* pages_to_crawl) {
+<<<<<<< HEAD
     int pos = 0;
     char* result;
     while ((result = webpage_getNextURL(page, &pos)) != NULL) {
@@ -111,11 +131,30 @@ static void page_scan(webpage_t* page, hashtable_t* urls_seen, bag_t* pages_to_c
         if (normalized && isInternalURL(normalized) && hashtable_insert(urls_seen, normalized, "")) {
             webpage_t* new_page = webpage_new(normalized, webpage_getDepth(page) + 1, NULL);
             if (new_page) {
+=======
+    int depth = webpage_getDepth(page);
+    char* url = webpage_getURL(page);
+
+    int pos = 0;
+    char* result;
+    while ((result = webpage_getNextURL(page, &pos)) != NULL) {
+        printf("%d     Found: %s\n", depth, url);
+        char* normalized = normalizeURL(result);
+        free(result);  // Free result from webpage_getNextURL to avoid memory leaks
+        if (normalized && isInternalURL(normalized) && hashtable_insert(urls_seen, normalized, "")) {
+            webpage_t* new_page = webpage_new(normalized, depth + 1, NULL);
+            if (new_page) {
+                printf("%d    Added: %s\n", depth, url);
+>>>>>>> submit4
                 bag_insert(pages_to_crawl, new_page);
             } else {
                 free(normalized);  // Important to free normalized if webpage_new fails
             }
         } else {
+<<<<<<< HEAD
+=======
+            printf("%d   IgnDupl: %s\n", depth, url);
+>>>>>>> submit4
             free(normalized);  // Free normalized URL if not inserted
         }
     }
