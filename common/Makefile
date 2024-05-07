@@ -1,38 +1,30 @@
-# Compiler to use
+# common/Makefile
+
+# Compiler and flags
 CC = gcc
+CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50
 
-# Flags to pass to the compiler
-CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50 -I../common
+# Object files and the target library
+OBJS = pagedir.o index.o word.o
+LIB = libcommon.a
 
-# Flags for linking, such as library paths and library names
-LDFLAGS = -L../common -L../libcs50
-LDLIBS = -lcommon -lcs50
+# Build the library by archiving object files
+$(LIB): $(OBJS)
+	ar cr $(LIB) $(OBJS)
+	ranlib $(LIB)
 
-# Name of the crawler executable
-EXE = crawler
-
-# Object files
-OBJS = crawler.o pagedir.o
-
-# Default target
-all: $(EXE)
-
-# Rule to link the program
-$(EXE): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
-
-# Rule to compile crawler.o
-crawler.o: crawler.c pagedir.h
-	$(CC) $(CFLAGS) -c crawler.c
-
-# Rule to compile pagedir.o
+# Compilation rules for each module
 pagedir.o: pagedir.c pagedir.h
-	$(CC) $(CFLAGS) -c pagedir.c
+	$(CC) $(CFLAGS) -c pagedir.c -o pagedir.o
 
-# Phony targets for cleaning up
+index.o: index.c index.h
+	$(CC) $(CFLAGS) -c index.c -o index.o
+
+word.o: word.c word.h
+	$(CC) $(CFLAGS) -c word.c -o word.o
+
+# Phony target for cleaning up
 .PHONY: clean
 
 clean:
-	rm -f *~ *.o *.gch $(EXE)
-
-
+	rm -f $(LIB) *~ *.o

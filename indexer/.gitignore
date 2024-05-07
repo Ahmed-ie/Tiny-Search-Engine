@@ -1,0 +1,13 @@
+# Ignore object files
+*.o
+
+# Ignore executables
+indexer
+indextest
+
+# Ignore test outputs
+testing.out
+
+# Miscellaneous
+*~
+*.gch
