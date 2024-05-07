@@ -1,3 +1,12 @@
+/**
+ * Ahmed's indexer.c
+ * Author: Ahmed
+ * File: indexer.c
+ * 
+ * This file contains the main function and logic for building the inverted index from the pages crawled by the TSE Crawler.
+ * The index is saved to a specified output file following the index file format.
+ */
+
 #include "index.h"
 #include <stdio.h>
 #include "pagedir.h"
@@ -7,6 +16,7 @@
 #include <string.h>
 
 int main(int argc, char* argv[]) {
+    // Ensure exactly two arguments are provided
     if (argc != 3) {
         fprintf(stderr, "Usage: %s pageDirectory indexFilename\n", argv[0]);
         return 1;
@@ -15,7 +25,7 @@ int main(int argc, char* argv[]) {
     char* pageDirectory = argv[1];
     char* indexFilename = argv[2];
 
-    // Validate page directory
+    // Validate page directory check the .crawler file
     if (!pagedir_validate(pageDirectory)) {
         fprintf(stderr, "The specified page directory is not valid.\n");
         return 1;
@@ -24,6 +34,7 @@ int main(int argc, char* argv[]) {
     // Initialize index
     index_t* index = index_new(500);
     if (index == NULL) {
+         // Error handling for index creation failure
         fprintf(stderr, "Failed to create index.\n");
         return 1;
     }
@@ -32,11 +43,14 @@ int main(int argc, char* argv[]) {
 int docID = 1;
 webpage_t* page;
 
+// Loop through all pages
 while ((page = pagedir_load(pageDirectory, docID)) != NULL) {
     int pos = 0;
     char* word;
 
+    // Extract words from the current page's HTML content
     while ((word = webpage_getNextWord(page, &pos)) != NULL) {
+        // Normalize each word
         normalizeWord(word);
         if (strlen(word) > 2) {
             index_insert(index, word, docID);
@@ -44,6 +58,7 @@ while ((page = pagedir_load(pageDirectory, docID)) != NULL) {
         free(word);
     }
 
+    // Clean up the current page object
     webpage_delete(page);
     docID++;
 }
@@ -60,6 +75,8 @@ if (page == NULL) {
         index_delete(index);
         return 1;
     }
+
+    // Save the index to the output file
     index_save(fp, index);
     fclose(fp);
     index_delete(index);

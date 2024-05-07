@@ -1,3 +1,12 @@
+/**
+ * Ahmed's indextest.c
+ * Author: Ahmed
+ * File: indextest.c
+ * 
+ * This file reads an existing index file created by the indexer and writes it to a new file.
+ * The purpose of this program is to ensure consistency and correctness of index files.
+ */
+
 #include "index.h"
 #include <stdio.h>
 
@@ -18,8 +27,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Load the index from file
-    // Assuming you know the number of slots or read it from somewhere
-    int num_slots = 500; // You need to determine this value based on your application needs
+    int num_slots = 500; 
     index_t* index = index_load(fp, num_slots);
     fclose(fp);
 
