@@ -1,0 +1,13 @@
+# Ignore object files
+*.o
+
+# Ignore executables
+querier
+fuzzquery
+
+# Ignore test outputs
+testing.out
+
+# Miscellaneous
+*~
+*.gch
