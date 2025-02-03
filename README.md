@@ -1,35 +1,65 @@
 # CS50 TSE
 ## Ahmed Elmi (GitHub username): Ahmed-ie
 
-The assignment and Specs are in a [public repo](https://github.com/CS50DartmouthSPS24/labs/tse).
-Do not clone that repo; view it on GitHub.
-Watch there for any commits that may represent updates to the assignment or specs.
+# Tiny Search Engine (TSE)
 
-Add here any assumptions you made while writing the crawler, any ways in which your implementation differs from the three Specs, or any ways in which you know your implementation fails to work.
+The Tiny Search Engine (TSE) is a simple search engine built as a part of the CS50 labs. It consists of three main components:
 
-## Features
+1. **Crawler**
+2. **Indexer**
+3. **Querier**
 
-- Crawls a website starting from a specified URL
-- Retrieves web pages and their contents
-- Parses initial web pages and extracts embedded URLs
-- Limits the crawling depth
-- Avoids visiting the same URL more than once
-- Saves crawled pages and their contents to files
+This project is structured to mimic the basic components of a search engine by crawling web pages, indexing the content, and then allowing for a query engine to search through the indexed content.
+
+This project is structured to mimic the basic components of a search engine by crawling web pages, indexing the content, and then allowing for a query engine to search through the indexed content.
+
+## Components
+
+### 1. Crawler
+
+The Crawler is responsible for collecting web data by crawling web pages starting from a seed URL. It saves each page to a directory with a unique document ID and records its depth in the website's link hierarchy.
+
+**Directory:** `crawler/`
+**Usage:**
+```bash
+./crawler seedURL pageDirectory maxDepth
+```
+
+### 2. Indexer
+The Indexer reads the documents stored by the Crawler, builds an index mapping words to document IDs and word counts, and then writes this index to a file.
+
+Directory: `indexer/`
+Usage:
+
+```bash
+./indexer pageDirectory indexFilename
+```
+### 3. Querier
+The Querier reads the index file produced by the Indexer and answers search queries according to the specified operators (and, or).
+
+Directory: `querier/`
+Usage:
+
+```bash
+./querier pageDirectory indexFilename
+```
+
+## Building the Project
+
+```bash
+make
+```
 
 ## Usage
 
-```bash
-./crawler [seedURL] [pageDirectory] [maxDepth]
-```
+To clean up all compiled binaries and other files, you can use:
 
+```bash
+make clean
+
+```
 ## Testing
 
-You can use the provided `testing.sh` script This script runs various tests to ensure that the crawler behaves as expected.
-
-./testing.sh
-
-```bash
-cd crawler
-make
-
-
+``` bash
+make test
+```
