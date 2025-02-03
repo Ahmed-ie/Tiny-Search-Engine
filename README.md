@@ -1,5 +1,3 @@
-# CS50 TSE
-## Ahmed Elmi (GitHub username): Ahmed-ie
 
 # Tiny Search Engine (TSE)
 
