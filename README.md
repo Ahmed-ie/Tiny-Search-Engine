@@ -1,7 +1,7 @@
 
 # Tiny Search Engine (TSE)
 
-The Tiny Search Engine (TSE) is a simple search engine built as a part of the CS50 labs. It consists of three main components:
+The Tiny Search Engine (TSE) is a simple search engine. It consists of three main components:
 
 1. **Crawler**
 2. **Indexer**
